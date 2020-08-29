@@ -1,11 +1,25 @@
 <template>
   <div class="container">
-    1111
+    hello
   </div>
 </template>
 
 <script>
-export default {}
+  export default {
+    data() {
+      return {
+        name: 'home index'
+      }
+    },
+    methods: {
+      test() {
+      }
+    },
+    mounted() {
+    },
+    asyncData(data) {
+    }
+  }
 </script>
 
 <style scoped lang="less">
