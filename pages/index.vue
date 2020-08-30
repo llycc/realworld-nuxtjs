@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     hello
+
   </div>
 </template>
 
@@ -12,8 +13,6 @@
       }
     },
     methods: {
-      test() {
-      }
     },
     mounted() {
     },
@@ -24,7 +23,6 @@
 
 <style scoped lang="less">
 .container {
-  color: red;
 }
 
 </style>

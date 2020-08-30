@@ -37,3 +37,4 @@ export function throttle(fn, intervalMs = 100) {
     }, intervalMs);
   }
 }
+

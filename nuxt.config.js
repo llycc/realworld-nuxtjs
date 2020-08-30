@@ -29,6 +29,7 @@ export default {
   ** Global CSS
   */
   css: [
+    './styles/index.less'
   ],
   /*
   ** Plugins to load before mounting the App
