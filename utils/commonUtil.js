@@ -37,4 +37,12 @@ export function throttle(fn, intervalMs = 100) {
     }, intervalMs);
   }
 }
-
+/**
+ * @desc 验证邮箱：只允许英文字母、数字、下划线、英文句号、以及中划线组成
+ * @param {string} email
+ * @return {boolean} email地址是否有效
+ * */
+export function isValidEmail(email) {
+  const reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+  return reg.test(email)
+}
