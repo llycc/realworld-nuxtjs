@@ -28,7 +28,7 @@ http.interceptors.request.use(function(config) {
 http.interceptors.response.use(function(response) {
   return response.data;
 }, function(error) {
-  return Promise.reject(error);
+  return Promise.reject(error.response.data);
 });
 
 export function setToken(token) {
