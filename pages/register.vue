@@ -1,12 +1,12 @@
 <template>
   <div>
-    <sign-in :isSignUpPage="true"></sign-in>
+    <app-sign-in :isSignUpPage="true"></app-sign-in>
   </div>
 </template>
 <script>
-import signIn from '../components/signIn';
+import appSignIn from '../components/appSignIn';
 export default {
-  components: {signIn},
+  components: {appSignIn},
   data() {
     return {};
   },
