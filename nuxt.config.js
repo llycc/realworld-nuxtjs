@@ -29,7 +29,8 @@ export default {
   ** Global CSS
   */
   css: [
-    './styles/index.less'
+    './styles/index.less',
+    './styles/iconfont/iconfont.css'
   ],
   /*
   ** Plugins to load before mounting the App

@@ -8,13 +8,22 @@
     </section>
     <section class="content-wrap content-width">
       <div class="right">
-        right ----
+        
+        <div class="tag-list">
+          <p>Popular Tags</p>
+          <span v-for="(tag, index) in tags" :key="index" @click="onTagListItem(tag)">{{tag}}</span>
+        </div>
       </div>
       <div class="left">
         <nav>
-          <div v-for="tab of tabs" :key="tab.title">{{tab.title}}</div>
+          <div v-for="(tab, index) in tabs" :key="tab.title" @click="onTab(tab, index)"
+           :class="{active: index === tabs.length - 1}">{{tab.title}}</div>
         </nav>
         <app-articles :articles="articles"></app-articles>
+        <ul class="pagination">
+          <li v-for="(item, index) in pages" :key="index"
+           @click="pageChange(index)" :class="{avtivePage: index === query.offset}">{{index + 1}}</li>
+        </ul>
       </div>
     </section>
   </div>
@@ -23,12 +32,14 @@
 <script>
 import {mapGetters} from 'vuex';
 import {getArticles} from '../services/articles';
+import {getTags} from '../services/tags';
 import appArticles from '../components/appArticles';
 export default {
   components: {appArticles},
   data() {
     return {
       articles: [],
+      tags: [],
       articlesCount: 0,
       query: {
         limit: 20,
@@ -36,26 +47,56 @@ export default {
       },
       tabs: [
         {title: 'Global Feed'}
-      ]
+      ],
+      pages: []
     };
   },
   computed: {
     ...mapGetters(['isLogined'])
   },
   methods: {
+    pageChange(offset) {
+      this.query.offset = offset;
+      this.queryArticles();
+    },
     queryArticles() {
       getArticles(this.query).then(data => {
-        console.log(data);
         this.articles = data.articles;
         this.articles.forEach((item, index) => {
           item.index = this.query.limit * this.query.offset + index;
         });
         this.articlesCount = data.articlesCount;
+        this.pages = new Array(Math.ceil(this.articlesCount / this.query.limit));
       });
+    },
+    getTags() {
+      getTags().then(data => {
+        this.tags = data.tags || [];
+      });
+    },
+    onTab(tab, index) {
+      if (index === this.tabs.length - 1) {
+        return;
+      }
+      this.tabs = this.tabs.slice(0, index + 1);
+      this.query.tag = this.tabs.length === 1 ? '' : this.tabs[this.tabs.length - 1].title;
+      this.queryArticles();
+    },
+    onTagListItem(tag) {
+
+      this.query.tag = tag;
+      if (this.tabs.length > 1) {
+        this.tabs.pop();
+      }
+      this.tabs.push({
+        title: '#' +tag
+      });
+      this.queryArticles();
     }
   },
   mounted() {
     this.queryArticles();
+    this.getTags();
   },
   asyncData(data) {},
 };
@@ -91,9 +132,55 @@ export default {
   .right {
     float: right;
     width: 25%;
+    .tag-list {
+      padding: 10px;
+      background: #f3f3f3;
+      border-radius: 5px;
+      & > p:first-child {
+        color: #373a3c;
+        margin: 0 0 6px 0;
+        font-size: 14px;
+      }
+      & > span {
+        display: inline-block;
+        padding: 3px 8px;
+        background: #818a91;
+        cursor: pointer;
+        margin: 0 5px 5px 0;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #fff;
+      }
+    }
   }
   .left {
-    margin-right: 25%;
+    margin-right: 27%;
+    nav > div {
+      font-size: 14px;
+      padding: 10px 10px;
+      box-sizing: border-box;
+      cursor: pointer;
+      display: inline-block;
+    }
+    nav div.active {
+      color: #5CB85C;
+      border-bottom: 2px solid #5CB85C;
+    }
+    .pagination {
+      li {
+        display: inline-block;
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-left: -1px;
+        color: #5CB85C;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .avtivePage {
+        background: #5cb85c;
+        color: #fff;
+      }
+    }
   }
 }
 </style>

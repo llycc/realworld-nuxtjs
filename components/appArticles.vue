@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class="article-list">
     <li v-for="article of articles" :key="article.slug">
       <div class="article-meta">
         <img :src="article.author.image" />
@@ -8,16 +8,25 @@
           <br/>
           <span class="lightly">{{article.updatedAt}}</span>
         </div>
+        <div class="favorite" @click="onFavorite(article)">
+          <i class="iconfont icon-favorite"></i>
+          <span>{{article.favoritesCount}}</span>
+        </div>
       </div>
       <nuxt-link :to="'/articles/' + article.slug">
         <h1>{{article.title}}</h1>
         <p class="lightly">{{article.description}}</p>
-        <p class="lightly">Read more...</p>
+        <span class="lightly">Read more...</span>
+        <ul class="tag-list">
+          <li v-for="(tag, index) in article.tagList" :key="index">{{tag}}</li>
+        </ul>
       </nuxt-link>
+      
     </li>
   </ul>
 </template>
 <script>
+import {mapGetters} from 'vuex';
 export default {
   props: {
     articles: {
@@ -28,28 +37,57 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  computed: {
+    ...mapGetters(['isLogined'])
+  },
+  methods: {
+    onFavorite(article) {
+      if (!this.isLogined) {
+        this.$router.push('/register');
+        return;
+      }
+    }
+  },
 };
 </script>
 <style scoped lang="less">
 ul {
   margin: 0;
   padding: 0;
+}
+li {
+  list-style: none;
+}
+.article-list {
   .lightly {
     font-size: 13px;
     color: #bbb;
   }
-  li {
-    list-style: none;
+  & > li {
     padding: 16px 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+    overflow: hidden;
     h1 {
       margin: 0 0 3px 0;
       font-weight: 600;
       font-size: 20px;
     }
     h1 + p {
-      margin: 0;
+      margin: 0 0 10px 0;
+    }
+    .tag-list {
+      float: right;
+      width: 40%;
+      text-align:right;
+      li {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 300;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 2px 8px;
+        margin:0 4px 4px 0;
+      }
     }
   }
   .article-meta {
@@ -67,6 +105,27 @@ ul {
       margin-left: 5px;
       a {
         color: #5CB85C;
+      }
+    }
+    .favorite {
+      float: right;
+      color: #5cb85c;
+      padding: 0px 4px;
+      border: 1px solid #5cb85c;
+      border-radius: 4px;
+      cursor: pointer;
+      i {
+        font-size: 18px;
+        vertical-align: middle;
+      }
+      span {
+        vertical-align: middle;
+        font-size: 14px;
+        margin-left: -4px;
+      }
+      &:hover {
+        background: #5cb85c;
+        color: #fff;
       }
     }
   }

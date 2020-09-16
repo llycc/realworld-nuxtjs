@@ -1,0 +1,16 @@
+{
+  "id": "2040844",
+  "name": "realworld",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "https://github.com/llycc/realworld-nuxtjs",
+  "glyphs": [
+    {
+      "icon_id": "845792",
+      "name": "心",
+      "font_class": "favorite",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    }
+  ]
+}
