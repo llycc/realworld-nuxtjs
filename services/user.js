@@ -6,3 +6,9 @@ export function signIn(data) {
 export function signUp(user) {
   return http.post('/users', user);
 }
+export function getUserInfo() {
+  return http.get('/user');
+}
+export function updateUserInfo(data) {
+  return http.put('/user', data);
+}

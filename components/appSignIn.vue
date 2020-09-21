@@ -35,7 +35,6 @@
 </template>
 <script>
 import { signIn, signUp } from "../services/user";
-import { setToken } from "../services/http";
 import { mapMutations } from "vuex";
 
 export default {
@@ -58,7 +57,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations('user', ['setLogined', 'setUserInfo']),
+    ...mapMutations('user', ['setLogined', 'setUserInfo', 'setUserToken']),
     onSubmit() {
       this.submitting = true;
       const signReq = this.isSignUpPage ? signUp : signIn;
@@ -67,7 +66,7 @@ export default {
         this.errors = {};
         this.setLogined(true);
         this.setUserInfo(user);
-        setToken(user.token);
+        this.setUserToken(user.token);
         this.$router.push('/');
       }, (data) => {
         this.errors = data.errors;
@@ -109,18 +108,8 @@ export default {
     margin-bottom: 20px;
 
     input {
-      width: 100%;
       height: 50px;
-      box-sizing: border-box;
-      font-size: 18px;
-      border-radius: 4px;
       padding: 10px 20px;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-
-      &:focus {
-        border-color: #66afe9;
-        outline: none;
-      }
     }
 
     button[type="submit"] {
@@ -130,14 +119,10 @@ export default {
       font-size: 18px;
       color: #fff;
       background: #5cb85c;
-      border: 0;
-      cursor: pointer;
 
       &:hover,
       &:focus {
         background: #449d44;
-        border: 0;
-        outline: 0;
       }
     }
   }

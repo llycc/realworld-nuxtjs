@@ -1,21 +1,19 @@
 import axios from 'axios';
-import {LocalStorageUtil} from '../utils/storageUtil';
-import {environment, LocalStorageKey} from "../config";
-
+import {environment} from "../config";
+import {state, getters} from '../store/user';
 
 const http = axios.create({
   baseURL: environment.baseURL,
   timeout: environment.requestTimeout
 });
-let currentToken = LocalStorageUtil.getItem(LocalStorageKey.Token);
-
 
 /**
  * 请求拦截器
  * */
 http.interceptors.request.use(function(config) {
-  if (currentToken) {
-    config.headers['Authorization'] = `Token ${currentToken}`;
+  const userToken = getters.getUserToken(state());
+  if (userToken) {
+    config.headers['Authorization'] = `Token ${userToken}`;
   }
   return config;
 }, function(error) {
@@ -28,17 +26,10 @@ http.interceptors.request.use(function(config) {
 http.interceptors.response.use(function(response) {
   return response.data;
 }, function(error) {
-  return Promise.reject(error.response.data);
+  console.log(error);
+  //return Promise.reject(error.response.data);
 });
 
-export function setToken(token) {
-  currentToken = token;
-  LocalStorageUtil.setItem(LocalStorageKey.Token, currentToken);
-}
-export function getToken() {
-  currentToken = LocalStorageUtil.getItem(LocalStorageKey.Token);
-  return currentToken;
-}
 
 export default {
   axios,
@@ -51,6 +42,16 @@ export default {
   post: function(path, data, params, headers) {
     return http.request({
       url: path, method: 'post', params, headers, data
+    });
+  },
+  delete: function(path, data, params, headers) {
+    return http.request({
+      url: path, method: 'delete', params, headers, data
+    });
+  },
+  put: function(path, data, params, headers) {
+    return http.request({
+      url: path, method: 'put', params, headers, data
     });
   }
 }

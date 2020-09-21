@@ -17,9 +17,9 @@
       <div class="left">
         <nav>
           <div v-for="(tab, index) in tabs" :key="tab.title" @click="onTab(tab, index)"
-           :class="{active: index === tabs.length - 1}">{{tab.title}}</div>
+           :class="{active: index === selectedTab}">{{tab.title}}</div>
         </nav>
-        <app-articles :articles="articles"></app-articles>
+        <app-articles :articles="articles" :loading="loading" @favorite="onToggleFavorite"></app-articles>
         <ul class="pagination">
           <li v-for="(item, index) in pages" :key="index"
            @click="pageChange(index)" :class="{avtivePage: index === query.offset}">{{index + 1}}</li>
@@ -31,7 +31,7 @@
 
 <script>
 import {mapGetters} from 'vuex';
-import {getArticles} from '../services/articles';
+import {getArticles, getFeedArticles, toggleFavoriteArticles} from '../services/articles';
 import {getTags} from '../services/tags';
 import appArticles from '../components/appArticles';
 export default {
@@ -39,34 +39,46 @@ export default {
   data() {
     return {
       articles: [],
+      loading: false,
       tags: [],
       articlesCount: 0,
       query: {
         limit: 20,
         offset: 0
       },
-      tabs: [
-        {title: 'Global Feed'}
-      ],
+      tabs: [],
+      selectedTab: 0,
       pages: []
     };
   },
   computed: {
-    ...mapGetters(['isLogined'])
+    ...mapGetters('user', ['isLogined'])
   },
   methods: {
+    initTabs() {
+      this.tabs = [];
+      if (this.isLogined) {
+        this.tabs.push({title: 'Your Feed',tag: ''});
+      }
+      this.tabs.push({title: 'Global Feed', tag: ''});
+    },
     pageChange(offset) {
       this.query.offset = offset;
       this.queryArticles();
     },
-    queryArticles() {
-      getArticles(this.query).then(data => {
+    queryArticles(actionFun = getArticles) {
+      this.loading = true;
+      this.articles = [];
+      this.articlesCount = 0;
+      actionFun(this.query).then(data => {
         this.articles = data.articles;
         this.articles.forEach((item, index) => {
           item.index = this.query.limit * this.query.offset + index;
         });
         this.articlesCount = data.articlesCount;
         this.pages = new Array(Math.ceil(this.articlesCount / this.query.limit));
+      }).finally(() => {
+        this.loading = false;
       });
     },
     getTags() {
@@ -75,28 +87,51 @@ export default {
       });
     },
     onTab(tab, index) {
-      if (index === this.tabs.length - 1) {
-        return;
+      const initTabCount = this.isLogined ? 2 : 1;
+      this.selectedTab = index;
+      if (index >= initTabCount) {
+        this.tabs = this.tabs.slice(0, initTabCount);
       }
-      this.tabs = this.tabs.slice(0, index + 1);
-      this.query.tag = this.tabs.length === 1 ? '' : this.tabs[this.tabs.length - 1].title;
-      this.queryArticles();
+      this.query.tag = this.tabs[index].tag;
+      if (this.isLogined && index === 0) {
+        this.queryArticles(getFeedArticles);
+      } else {
+        this.queryArticles();
+      }
     },
     onTagListItem(tag) {
-
       this.query.tag = tag;
       if (this.tabs.length > 1) {
         this.tabs.pop();
       }
       this.tabs.push({
-        title: '#' +tag
+        title: '#' +tag,
+        tag: tag
       });
       this.queryArticles();
+    },
+    onToggleFavorite(article) {
+      if (!this.isLogined) {
+        this.$router.push('/register');
+        return;
+      }
+      toggleFavoriteArticles(article.slug, article.favorited).then((res) => {
+        const index = this.articles.findIndex(item => item.slug);
+        this.articles.splice(index, 1, res.article);
+      });
     }
   },
   mounted() {
-    this.queryArticles();
     this.getTags();
+    this.initTabs();
+    if (this.isLogined) {
+      this.queryArticles(getFeedArticles);
+    } else {
+      this.queryArticles();
+    }
+    this.$axios.$get('/articles').then((tt) => {
+      console.log('111',tt);
+    });
   },
   asyncData(data) {},
 };

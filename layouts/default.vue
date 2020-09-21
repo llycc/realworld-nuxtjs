@@ -6,8 +6,15 @@
       </span>
       <span class="right">
         <nuxt-link to="/">Home</nuxt-link>
-        <nuxt-link to="/login">Sign in</nuxt-link>
-        <nuxt-link to="/register">Sign Up</nuxt-link>
+        <template v-if="!isLogined">
+          <nuxt-link to="/login">Sign in</nuxt-link>
+          <nuxt-link to="/register">Sign Up</nuxt-link>
+        </template>
+        <template v-else>
+          <nuxt-link to="">New Article</nuxt-link>
+          <nuxt-link to="/settings">Setting</nuxt-link>
+          <nuxt-link to="">{{curUserInfo.username}}</nuxt-link>
+        </template>
       </span>
     </header>
     <Nuxt />
@@ -17,10 +24,30 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapMutations} from 'vuex';
+  import {getUserInfo} from '../services/user';
+  import layoutMixin from '../mixins/layout';
   export default {
+    mixins: [layoutMixin],
+    data(){
+      return {
+        showContent: false,
+      }
+    },
     computed: {
-      ...mapGetters(['isLogined', 'curUserInfo'])
+      ...mapGetters('user',['isLogined', 'curUserInfo'])
+    },
+    methods: {
+      ...mapMutations('user', ['setLogined', 'setUserInfo']),
+    },
+    created() {
+      // getUserInfo().then(({user}) => {
+      //   this.setLogined(true);
+      //   this.setUserInfo(user);
+      // }, () => {})
+      //   .finally(() => {
+      //     this.showContent = true;
+      //   });
     }
   }
 </script>

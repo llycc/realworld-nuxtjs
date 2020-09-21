@@ -1,5 +1,7 @@
 <template>
   <ul class="article-list">
+    <p v-if="articles.length === 0 && !loading">No articles are here... yet.</p>
+    <p v-if="loading">Loading articles...</p>
     <li v-for="article of articles" :key="article.slug">
       <div class="article-meta">
         <img :src="article.author.image" />
@@ -8,7 +10,7 @@
           <br/>
           <span class="lightly">{{article.updatedAt}}</span>
         </div>
-        <div class="favorite" @click="onFavorite(article)">
+        <div class="favorite" :class="{favorited: article.favorited}" @click="onFavorite(article)">
           <i class="iconfont icon-favorite"></i>
           <span>{{article.favoritesCount}}</span>
         </div>
@@ -33,6 +35,10 @@ export default {
       type: Array,
       default: [],
     },
+    loading: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {};
@@ -42,10 +48,7 @@ export default {
   },
   methods: {
     onFavorite(article) {
-      if (!this.isLogined) {
-        this.$router.push('/register');
-        return;
-      }
+      this.$emit('favorite', article);
     }
   },
 };
@@ -123,7 +126,7 @@ li {
         font-size: 14px;
         margin-left: -4px;
       }
-      &:hover {
+      &:hover, &.favorited {
         background: #5cb85c;
         color: #fff;
       }

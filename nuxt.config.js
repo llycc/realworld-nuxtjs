@@ -10,6 +10,9 @@ export default {
   ** See https://nuxtjs.org/api/configuration-target
   */
   target: 'server',
+  router: {
+    middleware: ['router']
+  },
   /*
   ** Headers of the page
   ** See https://nuxtjs.org/api/configuration-head
@@ -37,6 +40,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    '~/plugins/axios'
   ],
   /*
   ** Auto import components
@@ -52,7 +56,13 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios',
+    'cookie-universal-nuxt',
+    ['cookie-universal-nuxt', { alias: 'cookiz' }]
   ],
+  axios: {
+    baseURL: 'https://conduit.productionready.io/api'
+  },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/

@@ -1,6 +1,10 @@
+import {LocalStorageUtil} from '../utils/storageUtil';
+import {ConstKey} from "../config";
+import Cookie from 'js-cookie';
 export const  state = () => ({
   logined: false,
-  userInfo: {}
+  userInfo: {},
+  userToken: null,
 });
 
 export const getters = {
@@ -14,5 +18,10 @@ export const mutations = {
   },
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo;
+  },
+  setUserToken(state, token) {
+    if (process.client) {
+      Cookie.set(ConstKey.TokenCookieName, token);
+    }
   }
 };
