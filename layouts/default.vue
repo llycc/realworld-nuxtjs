@@ -25,10 +25,7 @@
 </template>
 <script>
   import {mapGetters, mapMutations} from 'vuex';
-  import {getUserInfo} from '../services/user';
-  import layoutMixin from '../mixins/layout';
   export default {
-    mixins: [layoutMixin],
     data(){
       return {
         showContent: false,
@@ -41,13 +38,6 @@
       ...mapMutations('user', ['setLogined', 'setUserInfo']),
     },
     created() {
-      // getUserInfo().then(({user}) => {
-      //   this.setLogined(true);
-      //   this.setUserInfo(user);
-      // }, () => {})
-      //   .finally(() => {
-      //     this.showContent = true;
-      //   });
     }
   }
 </script>

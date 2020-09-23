@@ -31,8 +31,8 @@
   </div>
 </template>
 <script>
-import {updateUserInfo} from '../services/user';
 import {mapMutations, mapGetters} from 'vuex';
+import {ConstKey} from '../config';
 export default {
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
     ...mapMutations('user', ['setUserInfo', 'setLogined']),
     onSubmit() {
       this.submitting = true;
-      updateUserInfo({user: this.user}).then((res) => {
+      this.$users.updateUserInfo({user: this.user}).then((res) => {
         this.setUserInfo(res.user);
         this.$router.push(`@${res.user.username}`);
       }).finally(() => {
@@ -64,6 +64,8 @@ export default {
     onLogout() {
       this.setLogined(false);
       this.setUserInfo(null);
+      this.$cookies.remove(ConstKey.TokenCookieName);
+      this.$router.push('/');
     }
   },
   mounted() {

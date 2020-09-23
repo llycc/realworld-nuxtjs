@@ -1,4 +1,3 @@
-import {LocalStorageUtil} from '../utils/storageUtil';
 import {ConstKey} from "../config";
 
 export default function(ctx) {
@@ -6,9 +5,9 @@ export default function(ctx) {
   if (ctx.store.state.logined || !token) {
     return;
   }
-  return ctx.$axios.$get('/user').then((data) => {
-    ctx.store.commit('setLogined', true);
-    ctx.store.commit('setUserInfo', data.user);
+  return ctx.app.$users.getUserInfo().then((data) => {
+    ctx.store.commit('user/setLogined', true);
+    ctx.store.commit('user/setUserInfo', data.user);
   }, (error) => {
     ctx.$cookies.remove(ConstKey.TokenCookieName);
   });

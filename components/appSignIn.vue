@@ -34,9 +34,8 @@
   </div>
 </template>
 <script>
-import { signIn, signUp } from "../services/user";
 import { mapMutations } from "vuex";
-
+import {ConstKey} from '../config';
 export default {
   props: {
     isSignUpPage: {
@@ -57,16 +56,17 @@ export default {
     };
   },
   methods: {
-    ...mapMutations('user', ['setLogined', 'setUserInfo', 'setUserToken']),
+    ...mapMutations('user', ['setLogined', 'setUserInfo']),
     onSubmit() {
       this.submitting = true;
-      const signReq = this.isSignUpPage ? signUp : signIn;
+      const signReq = this.isSignUpPage ? this.$users.signUp : this.$users.signIn;
 
       signReq({user: this.user}).then(({user}) => {
         this.errors = {};
         this.setLogined(true);
         this.setUserInfo(user);
-        this.setUserToken(user.token);
+      
+        this.$cookies.set(ConstKey.TokenCookieName, user.token, {sameSite: 'Lax'});
         this.$router.push('/');
       }, (data) => {
         this.errors = data.errors;

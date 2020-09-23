@@ -31,9 +31,8 @@
 
 <script>
 import {mapGetters} from 'vuex';
-import {getArticles, getFeedArticles, toggleFavoriteArticles} from '../services/articles';
-import {getTags} from '../services/tags';
 import appArticles from '../components/appArticles';
+import {} from '../api/articles';
 export default {
   components: {appArticles},
   data() {
@@ -66,7 +65,7 @@ export default {
       this.query.offset = offset;
       this.queryArticles();
     },
-    queryArticles(actionFun = getArticles) {
+    queryArticles(actionFun = this.$articles.getArticles) {
       this.loading = true;
       this.articles = [];
       this.articlesCount = 0;
@@ -82,7 +81,7 @@ export default {
       });
     },
     getTags() {
-      getTags().then(data => {
+      this.$tags.getTags().then(data => {
         this.tags = data.tags || [];
       });
     },
@@ -94,7 +93,7 @@ export default {
       }
       this.query.tag = this.tabs[index].tag;
       if (this.isLogined && index === 0) {
-        this.queryArticles(getFeedArticles);
+        this.queryArticles(this.$articles.getFeedArticles);
       } else {
         this.queryArticles();
       }
@@ -115,7 +114,8 @@ export default {
         this.$router.push('/register');
         return;
       }
-      toggleFavoriteArticles(article.slug, article.favorited).then((res) => {
+      const action = article.favorited ? this.$articles.disfavorAritcle : this.$articles.favoriteArticle;
+      action(article.slug).then((res) => {
         const index = this.articles.findIndex(item => item.slug);
         this.articles.splice(index, 1, res.article);
       });
@@ -125,13 +125,10 @@ export default {
     this.getTags();
     this.initTabs();
     if (this.isLogined) {
-      this.queryArticles(getFeedArticles);
+      this.queryArticles(this.$articles.getFeedArticles);
     } else {
       this.queryArticles();
     }
-    this.$axios.$get('/articles').then((tt) => {
-      console.log('111',tt);
-    });
   },
   asyncData(data) {},
 };
