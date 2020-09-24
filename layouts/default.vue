@@ -13,7 +13,7 @@
         <template v-else>
           <nuxt-link to="">New Article</nuxt-link>
           <nuxt-link to="/settings">Setting</nuxt-link>
-          <nuxt-link to="">{{curUserInfo.username}}</nuxt-link>
+          <nuxt-link :to="`@${curUserInfo.username}`">{{curUserInfo.username}}</nuxt-link>
         </template>
       </span>
     </header>

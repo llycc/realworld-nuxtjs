@@ -135,8 +135,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "../styles/variable";
 .banner {
-  height: 170px;
+  height: @home-banner-height;
   background: #5CB85C;
   display: flex;
   justify-content: center;
