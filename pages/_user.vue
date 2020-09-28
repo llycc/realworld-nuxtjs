@@ -4,10 +4,15 @@
       <div class="banner-main">
         <div class="info-wrap">
           <p class="head-icon"><img :src='profile.image' /></p>
-          <h3>username</h3>
-          <p class='bio'>bio</p>
+          <h3>{{profile.username}}</h3>
+          <p class='bio'>{{profile.bio}}</p>
         </div>
-        <div class="setting-btu" @click = "onEditProfile">Edit Profile Settings</div>
+        <div class="setting-btu" v-if="isLogined && curUserInfo.username === profile.username" @click = "onEditProfile">Edit Profile Settings</div>
+        <div class="setting-btu" v-else @click="onToggleFollow">
+          <template v-if="profile.following">Unfollow</template>
+          <template v-else>Follow</template> 
+          {{profile.username}}
+        </div>
       </div>
     </section>
     <section>
@@ -47,11 +52,21 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('user', ['isLogined'])
+    ...mapGetters('user', ['isLogined', 'curUserInfo'])
   },
   methods: {
     onEditProfile() {
       this.$router.push('/settings');
+    },
+    onToggleFollow() {
+      if (!this.isLogined) {
+        this.$router.push('/register');
+        return;
+      }
+      const action = this.profile.following ? this.$profiles.unFollowUser : this.$profiles.followUser;
+      action(this.profile.username).then((res) => {
+        this.profile = res.profile;
+      });
     },
     onToggleFavorite(article) {
       if (!this.isLogined) {
@@ -89,10 +104,7 @@ export default {
     this.queryArticles(this.tabs[0].query);
   },
   asyncData(ctx) {
-    console.log(ctx.$axios);
-    return ctx.app.$profiles.getUserProfile(ctx.params.user.slice(1)).then((res) => {
-      return res;
-    })
+    return ctx.app.$profiles.getUserProfile(ctx.params.user.slice(1));
   }
 };
 </script>

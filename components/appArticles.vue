@@ -5,7 +5,7 @@
     <li v-for="article of articles" :key="article.slug">
       <div class="article-meta">
         <img :src="article.author.image" />
-        <div class="info">
+        <div class="article-info">
           <nuxt-link :to="'@' + article.author.username">{{article.author.username}}</nuxt-link>
           <br/>
           <span class="lightly">{{article.updatedAt}}</span>
@@ -15,7 +15,7 @@
           <span>{{article.favoritesCount}}</span>
         </div>
       </div>
-      <nuxt-link :to="'/articles/' + article.slug">
+      <nuxt-link :to="'/article/' + article.slug">
         <h1>{{article.title}}</h1>
         <p class="lightly">{{article.description}}</p>
         <span class="lightly">Read more...</span>
@@ -101,7 +101,7 @@ li {
       border-radius:30px;
       vertical-align: middle;
     }
-    .info {
+    .article-info {
       display: inline-block;
       vertical-align:middle;
       line-height: 16px;
@@ -126,7 +126,7 @@ li {
         font-size: 14px;
         margin-left: -4px;
       }
-      &:hover, &.favorited {
+      &:hover, favorited {
         background: #5cb85c;
         color: #fff;
       }
