@@ -11,7 +11,7 @@
           <nuxt-link to="/register">Sign Up</nuxt-link>
         </template>
         <template v-else>
-          <nuxt-link to="">New Article</nuxt-link>
+          <nuxt-link to="/editor">New Article</nuxt-link>
           <nuxt-link to="/settings">Setting</nuxt-link>
           <nuxt-link :to="`@${curUserInfo.username}`">{{curUserInfo.username}}</nuxt-link>
         </template>
